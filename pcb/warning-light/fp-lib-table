@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name "warning-light")(type "KiCad")(uri "/home/brooks/github/warning-light/pcb/warning-light.pretty")(options "")(descr ""))
+)
