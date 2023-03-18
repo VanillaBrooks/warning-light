@@ -1,2 +1,3 @@
 cad/*.FCStd1
 pcb/**/*.zip
+src/api.py
