@@ -1,6 +1,6 @@
 mod logging;
 mod matrix;
-#[cfg(feature="pi")]
+#[cfg(feature = "pi")]
 mod pi;
 
 use std::thread::sleep;
@@ -16,16 +16,18 @@ const SECONDS_BETWEEN_POLL: u64 = 5;
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<()> {
-    info!("starting");
+    println!("starting");
 
     let logging_path: String = std::env::args()
         .nth(1)
         .ok_or_else(|| anyhow::anyhow!("failed to fetch logging path output from command line"))?;
 
+    println!("fetched logging path");
+
     logging::setup_logs(&logging_path)
         .with_context(|| format!("failed to setup logs to {logging_path}"))?;
 
-    #[cfg(feature="pi")]
+    #[cfg(feature = "pi")]
     let mut pi = pi::Pi::new().unwrap();
 
     info!("setting up matrix connection");
@@ -44,7 +46,7 @@ async fn main() -> Result<()> {
                 if let Some(num_seconds) = enable_seconds {
                     info!("turning on light for {num_seconds} seconds");
 
-                    #[cfg(feature="pi")]
+                    #[cfg(feature = "pi")]
                     pi.activate_light(num_seconds.into())
                 }
             }

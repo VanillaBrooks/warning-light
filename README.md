@@ -38,7 +38,8 @@ just transport
 to automatically start the program, you can use systemd services:
 
 ```
-sudo cd /home/pi/warning-light sudo cp warning-light.service /etc/systemd/system/
+cd /home/pi/warning-light 
+sudo cp warning-light.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable warning-light
 sudo systemctl start warning-light

@@ -15,7 +15,7 @@ pub type HyperClient = ruma::client::http_client::HyperNativeTls;
 struct Configuration {
     homeserver_url: String,
     username: String,
-    password: String
+    password: String,
 }
 
 pub(crate) struct MatrixConnection {
@@ -25,7 +25,7 @@ pub(crate) struct MatrixConnection {
 impl MatrixConnection {
     pub(crate) async fn new() -> Result<Self> {
         let config_bytes = include_str!("../.config.json");
-        let config : Configuration = serde_json::from_str(config_bytes)
+        let config: Configuration = serde_json::from_str(config_bytes)
             .with_context(|| format!("failed to parse configuration json"))?;
 
         let homeserver_url = config.homeserver_url.parse().unwrap();
