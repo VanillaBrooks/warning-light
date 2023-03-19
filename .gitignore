@@ -1,3 +1,8 @@
 cad/*.FCStd1
 pcb/**/*.zip
 src/api.py
+
+
+# Added by cargo
+
+/target

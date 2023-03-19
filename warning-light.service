@@ -1,0 +1,13 @@
+[Unit]
+Description=Warning light matrix interface
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=pi
+Type=simple
+ExecStart=/bin/bash -c "exec /home/pi/warning-light/run /home/pi/warning-light/output.log"
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

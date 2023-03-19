@@ -1,0 +1,40 @@
+[package]
+name = "warning-light"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.70"
+rppal = "0.14.1"
+log = "0.4.17"
+chrono = "0.4.24"
+serde_json = "^1.0.0"
+
+[dependencies.ruma]
+version = "0.8.2"
+features = ["client", "api", "events", "client-ext-client-api", "client-api-c", "client-hyper-native-tls"]
+
+[dependencies.tokio]
+version = "1.26.0"
+features = ["rt", "macros"]
+
+[dependencies.hyper-tls]
+version = "0.5.0"
+#features = ["vendored"]
+
+[dependencies.hyper]
+version = "0.14.25"
+features = ["client", "http2"]
+
+[dependencies.fern]
+version = "0.6.1"
+features = ["chrono"]
+
+[dependencies.serde]
+version = "^1.0.0"
+
+[features]
+default = []
+pi = ["hyper-tls/vendored"]
