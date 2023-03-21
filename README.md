@@ -8,11 +8,13 @@ and enabled from messages on matrix.
 create a file `./.config.json` with the following parameters (example is provided for matrix.org,
 you can use any homeserver):
 
+```
 {
 	"homeserver_url": "https://matrix.org",
 	"username": "@your-username:matrix.org",
 	"password": "your password here"
 }
+```
 
 these parameters will be included in the binary and used at runtime.
 
