@@ -12,7 +12,7 @@ use anyhow::Result;
 #[macro_use]
 extern crate log;
 
-const SECONDS_BETWEEN_POLL: u64 = 5;
+const SECONDS_BETWEEN_POLL: u64 = 20;
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<()> {

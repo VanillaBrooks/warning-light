@@ -26,7 +26,7 @@ to run them. Otherwise, you can likely figure out how to run them without just b
 to cross compile for rasperry pi zero W:
 
 ```
-just comple
+just compile
 ```
 
 then, edit the `ip` variable of the justfile to the IP address of the pi, and then

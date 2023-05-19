@@ -26,9 +26,14 @@ impl MatrixConnection {
     pub(crate) async fn new() -> Result<Self> {
         let config_bytes = include_str!("../.config.json");
         let config: Configuration = serde_json::from_str(config_bytes)
-            .with_context(|| format!("failed to parse configuration json"))?;
+            .with_context(|| "failed to parse configuration json")?;
 
-        let homeserver_url = config.homeserver_url.parse().unwrap();
+        let homeserver_url = config.homeserver_url.parse().with_context(|| {
+            format!(
+                "failed to parse homeserver url `{}` as uri",
+                config.homeserver_url
+            )
+        })?;
 
         let https = hyper_tls::HttpsConnector::new();
         let hyper_client = hyper::client::Client::builder().build::<_, hyper::Body>(https);
@@ -37,12 +42,12 @@ impl MatrixConnection {
             .homeserver_url(homeserver_url)
             .http_client(hyper_client)
             .await
-            .unwrap();
+            .with_context(|| "failed to setup client")?;
 
         let _session = client
             .log_in(&config.username, &config.password, None, None)
             .await
-            .unwrap();
+            .with_context(|| "failed to login")?;
 
         let out = MatrixConnection { c: client };
         Ok(out)
@@ -50,7 +55,11 @@ impl MatrixConnection {
 
     pub(crate) async fn load_rooms(&self) -> Result<Vec<Room>> {
         let joined_rooms_req = joined_rooms::v3::Request::new();
-        let joined_rooms_resp = self.c.send_request(joined_rooms_req).await.unwrap();
+        let joined_rooms_resp = self
+            .c
+            .send_request(joined_rooms_req)
+            .await
+            .with_context(|| "failed to send joined_rooms request")?;
 
         let mut rooms = Vec::new();
 
@@ -173,8 +182,11 @@ async fn recent_message_for_room(
     client: &Client<HyperClient>,
     room_id: ruma::OwnedRoomId,
 ) -> Result<filter::EventIdAnd<String>> {
-    let req = get_message_events::v3::Request::backward(room_id);
-    let resp = client.send_request(req).await.unwrap();
+    let req = get_message_events::v3::Request::backward(room_id.clone());
+    let resp = client
+        .send_request(req)
+        .await
+        .with_context(|| format!("failed to get message events from room id {room_id}"))?;
 
     let last_text_message = resp
         .chunk
@@ -182,15 +194,14 @@ async fn recent_message_for_room(
         // deserialize the event
         .filter_map(|raw_event| raw_event.deserialize().ok())
         // filter events to find the event id and the text message associated with it
-        .filter_map(|event| {
+        .find_map(|event| {
             filter::message(event)
                 .and_then(filter::room_message)
                 .and_then(filter::non_redacted)
                 .and_then(filter::text_message)
                 .map(filter::text_body)
         })
-        .next()
-        .unwrap();
+        .ok_or_else(|| anyhow::anyhow!("missing last message for room id {room_id}"))?;
 
     Ok(last_text_message)
 }
